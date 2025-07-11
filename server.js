@@ -29,25 +29,31 @@ app.post('/api/analyze-food', async (req, res) => {
         if (!image) {
             return res.status(400).json({ error: 'No image provided' });
         }
+        
+        // Extract base64 data from data URL
+        let base64Image = image;
+        if (image.startsWith('data:image/')) {
+            base64Image = image.split(',')[1];
+        }
 
         const response = await openai.chat.completions.create({
             model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
             messages: [
                 {
                     role: "system",
-                    content: "You are a nutrition expert and medical advisor. Analyze the food image and provide a detailed response in JSON format with the following structure: {\"name\": \"Food Name\", \"calories\": number, \"confidence\": number_between_0_and_1, \"description\": \"brief description\", \"ingredients\": [\"ingredient1\", \"ingredient2\"], \"activities\": [{\"name\": \"Activity Name\", \"duration\": \"X minutes\", \"icon\": \"feather_icon_name\"}], \"health_impacts\": [{\"condition\": \"Disease Name\", \"benefit\": \"positive effect or null\", \"risk\": \"negative effect or null\", \"recommendation\": \"brief advice\"}]}. Analyze health impacts for these 10 common conditions: 1) Diabetes Type 2, 2) High Blood Pressure, 3) High Cholesterol, 4) Obesity, 5) Heart Disease, 6) Fatty Liver Disease, 7) Gastroesophageal Reflux (GERD), 8) Osteoporosis, 9) Chronic Inflammation, 10) Metabolic Syndrome. Provide 3 activities to burn calories. Use feather icon names like 'zap', 'bike', 'heart', 'activity', 'walk', 'mountain', 'droplet', 'music', 'trending-up', 'circle', 'home'."
+                    content: "You are a nutrition expert and medical advisor. Analyze the food image and provide a detailed response in JSON format. The response MUST include ALL required fields. Use this exact structure: {\"name\": \"Food Name\", \"calories\": number, \"confidence\": number_between_0_and_1, \"description\": \"brief description\", \"ingredients\": [\"ingredient1\", \"ingredient2\", \"ingredient3\"], \"activities\": [{\"name\": \"Activity Name\", \"duration\": \"X minutes\", \"icon\": \"feather_icon_name\"}], \"health_impacts\": [{\"condition\": \"Diabetes Type 2\", \"benefit\": \"positive effect or null\", \"risk\": \"negative effect or null\", \"recommendation\": \"brief advice\"}, {\"condition\": \"High Blood Pressure\", \"benefit\": \"positive effect or null\", \"risk\": \"negative effect or null\", \"recommendation\": \"brief advice\"}, {\"condition\": \"High Cholesterol\", \"benefit\": \"positive effect or null\", \"risk\": \"negative effect or null\", \"recommendation\": \"brief advice\"}, {\"condition\": \"Obesity\", \"benefit\": \"positive effect or null\", \"risk\": \"negative effect or null\", \"recommendation\": \"brief advice\"}, {\"condition\": \"Heart Disease\", \"benefit\": \"positive effect or null\", \"risk\": \"negative effect or null\", \"recommendation\": \"brief advice\"}, {\"condition\": \"Fatty Liver Disease\", \"benefit\": \"positive effect or null\", \"risk\": \"negative effect or null\", \"recommendation\": \"brief advice\"}, {\"condition\": \"GERD\", \"benefit\": \"positive effect or null\", \"risk\": \"negative effect or null\", \"recommendation\": \"brief advice\"}, {\"condition\": \"Osteoporosis\", \"benefit\": \"positive effect or null\", \"risk\": \"negative effect or null\", \"recommendation\": \"brief advice\"}, {\"condition\": \"Chronic Inflammation\", \"benefit\": \"positive effect or null\", \"risk\": \"negative effect or null\", \"recommendation\": \"brief advice\"}, {\"condition\": \"Metabolic Syndrome\", \"benefit\": \"positive effect or null\", \"risk\": \"negative effect or null\", \"recommendation\": \"brief advice\"}]}. IMPORTANT: You must analyze ALL 10 health conditions. Provide 3 activities to burn calories. Use feather icon names like 'zap', 'bike', 'heart', 'activity', 'walk', 'mountain', 'droplet', 'music', 'trending-up', 'circle', 'home'."
                 },
                 {
                     role: "user",
                     content: [
                         {
                             type: "text",
-                            text: "Please analyze this food image and tell me what food it is, estimate the calories, identify main ingredients, and suggest 3 activities to burn those calories. Also analyze the health impacts of the main ingredients on 10 common modern diseases: Diabetes Type 2, High Blood Pressure, High Cholesterol, Obesity, Heart Disease, Fatty Liver Disease, GERD, Osteoporosis, Chronic Inflammation, and Metabolic Syndrome. For each condition, provide benefits/risks and recommendations. Respond in JSON format."
+                            text: "Analyze this food image and provide a complete health analysis. I need: 1) Food name and calories, 2) Main ingredients list, 3) 3 exercise activities to burn calories, 4) Health impact analysis for ALL 10 conditions: Diabetes Type 2, High Blood Pressure, High Cholesterol, Obesity, Heart Disease, Fatty Liver Disease, GERD, Osteoporosis, Chronic Inflammation, and Metabolic Syndrome. For each condition, analyze how the food's ingredients affect it (benefits, risks, recommendations). Respond in the exact JSON format specified in system prompt."
                         },
                         {
                             type: "image_url",
                             image_url: {
-                                url: `data:image/jpeg;base64,${image}`
+                                url: `data:image/jpeg;base64,${base64Image}`
                             }
                         }
                     ]
@@ -58,6 +64,9 @@ app.post('/api/analyze-food', async (req, res) => {
         });
 
         const analysisResult = JSON.parse(response.choices[0].message.content);
+        
+        // Log the AI response for debugging
+        console.log('AI Response:', JSON.stringify(analysisResult, null, 2));
         
         // Validate and format the response
         const result = {
@@ -70,6 +79,8 @@ app.post('/api/analyze-food', async (req, res) => {
             ingredients: analysisResult.ingredients || [],
             health_impacts: analysisResult.health_impacts || []
         };
+        
+        console.log('Final result:', JSON.stringify(result, null, 2));
 
         res.json(result);
 

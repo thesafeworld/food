@@ -294,7 +294,9 @@ async function analyzeWithOpenAI(base64Image) {
             icon: 'coffee', // Default icon
             activities: analysisResult.activities || getDefaultActivities(analysisResult.calories || 300),
             confidence: analysisResult.confidence || 0.7,
-            description: analysisResult.description || ''
+            description: analysisResult.description || '',
+            ingredients: analysisResult.ingredients || [],
+            health_impacts: analysisResult.health_impacts || []
         };
         
     } catch (error) {
