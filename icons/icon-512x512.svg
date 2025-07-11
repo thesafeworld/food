@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#45a049;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8E8E;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#grad1)" stroke="#fff" stroke-width="16" filter="url(#shadow)"/>
+  
+  <!-- Camera body -->
+  <rect x="160" y="190" width="192" height="128" rx="20" fill="#fff" opacity="0.95" filter="url(#shadow)"/>
+  
+  <!-- Camera lens -->
+  <circle cx="256" cy="254" r="48" fill="url(#grad2)" stroke="#fff" stroke-width="6" filter="url(#shadow)"/>
+  <circle cx="256" cy="254" r="32" fill="#fff" opacity="0.3"/>
+  <circle cx="256" cy="254" r="20" fill="url(#grad2)" opacity="0.6"/>
+  
+  <!-- Camera flash -->
+  <rect x="308" y="200" width="20" height="16" rx="4" fill="#fff" opacity="0.9"/>
+  
+  <!-- Camera viewfinder -->
+  <rect x="285" y="225" width="16" height="12" rx="2" fill="#fff" opacity="0.7"/>
+  
+  <!-- Camera grip -->
+  <rect x="340" y="210" width="8" height="60" rx="4" fill="#ddd" opacity="0.8"/>
+  
+  <!-- Food elements around camera -->
+  <g opacity="0.8">
+    <circle cx="200" cy="350" r="20" fill="#FF6B6B"/>
+    <circle cx="240" cy="365" r="16" fill="#4ECDC4"/>
+    <circle cx="280" cy="355" r="18" fill="#45B7D1"/>
+    <circle cx="320" cy="370" r="14" fill="#FFA07A"/>
+    <circle cx="180" cy="380" r="12" fill="#98D8C8"/>
+    <circle cx="340" cy="340" r="16" fill="#F7DC6F"/>
+  </g>
+  
+  <!-- Activity indicators -->
+  <g stroke="#fff" stroke-width="4" fill="none" opacity="0.6">
+    <path d="M370 280 L390 290 L370 300" stroke-linecap="round"/>
+    <path d="M140 280 L120 290 L140 300" stroke-linecap="round"/>
+    <circle cx="256" cy="400" r="8"/>
+    <path d="M240 420 Q256 400 272 420" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Sparkle effects -->
+  <g fill="#fff" opacity="0.7">
+    <circle cx="350" cy="120" r="4"/>
+    <circle cx="380" cy="160" r="3"/>
+    <circle cx="100" cy="150" r="3"/>
+    <circle cx="140" cy="100" r="4"/>
+    <circle cx="400" cy="350" r="3"/>
+    <circle cx="90" cy="370" r="4"/>
+    <circle cx="420" cy="200" r="2"/>
+    <circle cx="80" cy="250" r="3"/>
+    <circle cx="430" cy="450" r="2"/>
+    <circle cx="60" cy="450" r="3"/>
+  </g>
+  
+  <!-- Calorie burning indicators -->
+  <g fill="url(#grad3)" opacity="0.5">
+    <path d="M150 120 Q156 110 162 120 Q156 130 150 120" />
+    <path d="M170 140 Q176 130 182 140 Q176 150 170 140" />
+    <path d="M360 100 Q366 90 372 100 Q366 110 360 100" />
+    <path d="M380 130 Q386 120 392 130 Q386 140 380 130" />
+  </g>
+  
+  <!-- Central highlight -->
+  <circle cx="256" cy="254" r="8" fill="#fff" opacity="0.8"/>
+  
+  <!-- Bottom text indicator -->
+  <rect x="200" y="440" width="112" height="4" rx="2" fill="#fff" opacity="0.4"/>
+  <rect x="220" y="450" width="72" height="3" rx="1.5" fill="#fff" opacity="0.3"/>
+</svg>

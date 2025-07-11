@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4CAF50">
+    <title>Food Analyzer PWA</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192x192.svg">
+    
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="app-title">
+                <i data-feather="camera"></i>
+                Food Analyzer
+            </h1>
+            <p class="app-subtitle">Capture, analyze, and burn calories</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <i data-feather="upload-cloud" class="upload-icon"></i>
+                        <h3>Upload or Take Photo</h3>
+                        <p>Tap to select from gallery or camera</p>
+                    </div>
+                    <input type="file" id="fileInput" accept="image/*" capture="environment" hidden>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="galleryBtn">
+                        <i data-feather="image"></i>
+                        Gallery
+                    </button>
+                    <button class="btn btn-primary" id="cameraBtn">
+                        <i data-feather="camera"></i>
+                        Camera
+                    </button>
+                </div>
+            </section>
+
+            <!-- Preview Section -->
+            <section class="preview-section" id="previewSection" style="display: none;">
+                <div class="image-preview">
+                    <img id="previewImage" alt="Selected food image">
+                    <button class="btn-close" id="removeImage">
+                        <i data-feather="x"></i>
+                    </button>
+                </div>
+                <button class="btn btn-analyze" id="analyzeBtn">
+                    <i data-feather="search"></i>
+                    Analyze Food
+                </button>
+            </section>
+
+            <!-- Loading Section -->
+            <section class="loading-section" id="loadingSection" style="display: none;">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Analyzing your food...</p>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-card">
+                    <div class="food-info">
+                        <div class="food-icon">
+                            <i data-feather="coffee"></i>
+                        </div>
+                        <div class="food-details">
+                            <h3 id="foodName">Food Name</h3>
+                            <p class="calories" id="caloriesInfo">Calories</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activities-section">
+                        <h4>
+                            <i data-feather="activity"></i>
+                            Burn These Calories
+                        </h4>
+                        <div class="activities-list" id="activitiesList">
+                            <!-- Activities will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-secondary" id="analyzeAgainBtn">
+                        <i data-feather="rotate-ccw"></i>
+                        Analyze Another
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Install PWA Banner -->
+        <div class="install-banner" id="installBanner" style="display: none;">
+            <div class="install-content">
+                <i data-feather="download"></i>
+                <span>Install this app for quick access</span>
+            </div>
+            <button class="btn-install" id="installBtn">Install</button>
+            <button class="btn-dismiss" id="dismissBtn">×</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize Feather Icons
+        feather.replace();
+        
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
