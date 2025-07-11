@@ -17,6 +17,10 @@ const analyzeAgainBtn = document.getElementById('analyzeAgainBtn');
 const foodName = document.getElementById('foodName');
 const caloriesInfo = document.getElementById('caloriesInfo');
 const activitiesList = document.getElementById('activitiesList');
+const healthToggle = document.getElementById('healthToggle');
+const healthImpactsSection = document.getElementById('healthImpactsSection');
+const ingredientsInfo = document.getElementById('ingredientsInfo');
+const healthImpactsList = document.getElementById('healthImpactsList');
 const installBanner = document.getElementById('installBanner');
 const installBtn = document.getElementById('installBtn');
 const dismissBtn = document.getElementById('dismissBtn');
@@ -141,6 +145,9 @@ function initializeEventListeners() {
     // Analyze again button
     analyzeAgainBtn.addEventListener('click', resetApp);
 
+    // Health toggle button
+    healthToggle.addEventListener('click', toggleHealthSection);
+    
     // Install banner buttons
     installBtn.addEventListener('click', installApp);
     dismissBtn.addEventListener('click', dismissInstallBanner);
@@ -344,6 +351,15 @@ function displayResults(result) {
         activitiesList.appendChild(activityElement);
     });
     
+    // Display health impacts if available
+    if (result.health_impacts && result.health_impacts.length > 0) {
+        displayHealthImpacts(result);
+        healthToggle.style.display = 'block';
+    } else {
+        healthToggle.style.display = 'none';
+        healthImpactsSection.style.display = 'none';
+    }
+    
     // Re-initialize Feather icons
     feather.replace();
 }
@@ -363,6 +379,84 @@ function createActivityElement(activity) {
     return activityItem;
 }
 
+function displayHealthImpacts(result) {
+    // Display ingredients
+    if (result.ingredients && result.ingredients.length > 0) {
+        ingredientsInfo.innerHTML = `
+            <div class="ingredients-title">Main Ingredients:</div>
+            <div class="ingredients-list">${result.ingredients.join(', ')}</div>
+        `;
+    } else {
+        ingredientsInfo.innerHTML = '';
+    }
+    
+    // Clear and populate health impacts list
+    healthImpactsList.innerHTML = '';
+    
+    if (result.health_impacts && result.health_impacts.length > 0) {
+        result.health_impacts.forEach(impact => {
+            const impactElement = createHealthImpactElement(impact);
+            healthImpactsList.appendChild(impactElement);
+        });
+    }
+}
+
+function createHealthImpactElement(impact) {
+    const impactItem = document.createElement('div');
+    impactItem.className = 'health-impact-item';
+    
+    let detailsHTML = '';
+    
+    if (impact.benefit && impact.benefit !== 'null') {
+        detailsHTML += `
+            <div class="health-detail">
+                <span class="health-label health-benefit">Benefits:</span>
+                <span class="health-content benefit">${impact.benefit}</span>
+            </div>
+        `;
+    }
+    
+    if (impact.risk && impact.risk !== 'null') {
+        detailsHTML += `
+            <div class="health-detail">
+                <span class="health-label health-risk">Risks:</span>
+                <span class="health-content risk">${impact.risk}</span>
+            </div>
+        `;
+    }
+    
+    if (impact.recommendation && impact.recommendation !== 'null') {
+        detailsHTML += `
+            <div class="health-detail">
+                <span class="health-label health-recommendation">Advice:</span>
+                <span class="health-content recommendation">${impact.recommendation}</span>
+            </div>
+        `;
+    }
+    
+    impactItem.innerHTML = `
+        <div class="health-condition">${impact.condition}</div>
+        ${detailsHTML}
+    `;
+    
+    return impactItem;
+}
+
+function toggleHealthSection() {
+    const isVisible = healthImpactsSection.style.display === 'block';
+    
+    if (isVisible) {
+        healthImpactsSection.style.display = 'none';
+        healthToggle.innerHTML = '<i data-feather="chevron-down"></i> View Health Impact Analysis';
+    } else {
+        healthImpactsSection.style.display = 'block';
+        healthToggle.innerHTML = '<i data-feather="chevron-up"></i> Hide Health Impact Analysis';
+    }
+    
+    // Re-initialize Feather icons
+    feather.replace();
+}
+
 function resetApp() {
     selectedImage = null;
     previewImage.src = '';
@@ -371,6 +465,8 @@ function resetApp() {
     hideSection('previewSection');
     hideSection('resultsSection');
     hideSection('loadingSection');
+    hideSection('healthImpactsSection');
+    healthToggle.style.display = 'none';
 }
 
 function showSection(sectionId) {

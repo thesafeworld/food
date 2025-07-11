@@ -35,14 +35,14 @@ app.post('/api/analyze-food', async (req, res) => {
             messages: [
                 {
                     role: "system",
-                    content: "You are a nutrition expert. Analyze the food image and provide a detailed response in JSON format with the following structure: {\"name\": \"Food Name\", \"calories\": number, \"confidence\": number_between_0_and_1, \"description\": \"brief description\", \"activities\": [{\"name\": \"Activity Name\", \"duration\": \"X minutes\", \"icon\": \"feather_icon_name\"}]}. Provide 3 activities to burn the estimated calories. Use appropriate feather icon names like 'zap', 'bike', 'heart', 'activity', 'walk', 'mountain', 'droplet', 'music', 'trending-up', 'circle', 'home'."
+                    content: "You are a nutrition expert and medical advisor. Analyze the food image and provide a detailed response in JSON format with the following structure: {\"name\": \"Food Name\", \"calories\": number, \"confidence\": number_between_0_and_1, \"description\": \"brief description\", \"ingredients\": [\"ingredient1\", \"ingredient2\"], \"activities\": [{\"name\": \"Activity Name\", \"duration\": \"X minutes\", \"icon\": \"feather_icon_name\"}], \"health_impacts\": [{\"condition\": \"Disease Name\", \"benefit\": \"positive effect or null\", \"risk\": \"negative effect or null\", \"recommendation\": \"brief advice\"}]}. Analyze health impacts for these 10 common conditions: 1) Diabetes Type 2, 2) High Blood Pressure, 3) High Cholesterol, 4) Obesity, 5) Heart Disease, 6) Fatty Liver Disease, 7) Gastroesophageal Reflux (GERD), 8) Osteoporosis, 9) Chronic Inflammation, 10) Metabolic Syndrome. Provide 3 activities to burn calories. Use feather icon names like 'zap', 'bike', 'heart', 'activity', 'walk', 'mountain', 'droplet', 'music', 'trending-up', 'circle', 'home'."
                 },
                 {
                     role: "user",
                     content: [
                         {
                             type: "text",
-                            text: "Please analyze this food image and tell me what food it is, estimate the calories, and suggest 3 activities to burn those calories. Respond in JSON format."
+                            text: "Please analyze this food image and tell me what food it is, estimate the calories, identify main ingredients, and suggest 3 activities to burn those calories. Also analyze the health impacts of the main ingredients on 10 common modern diseases: Diabetes Type 2, High Blood Pressure, High Cholesterol, Obesity, Heart Disease, Fatty Liver Disease, GERD, Osteoporosis, Chronic Inflammation, and Metabolic Syndrome. For each condition, provide benefits/risks and recommendations. Respond in JSON format."
                         },
                         {
                             type: "image_url",
@@ -54,7 +54,7 @@ app.post('/api/analyze-food', async (req, res) => {
                 }
             ],
             response_format: { type: "json_object" },
-            max_tokens: 500
+            max_tokens: 1500
         });
 
         const analysisResult = JSON.parse(response.choices[0].message.content);
@@ -66,7 +66,9 @@ app.post('/api/analyze-food', async (req, res) => {
             icon: 'coffee', // Default icon
             activities: analysisResult.activities || getDefaultActivities(analysisResult.calories || 300),
             confidence: analysisResult.confidence || 0.7,
-            description: analysisResult.description || ''
+            description: analysisResult.description || '',
+            ingredients: analysisResult.ingredients || [],
+            health_impacts: analysisResult.health_impacts || []
         };
 
         res.json(result);

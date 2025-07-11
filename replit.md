@@ -38,6 +38,8 @@ Preferred communication style: Simple, everyday language.
 - **Preview Section**: Image preview with remove/analyze actions
 - **Loading Section**: Analysis progress indicator
 - **Results Section**: Food name, calories, and exercise recommendations
+- **Health Impact Section**: Detailed analysis of food's effects on 10 common diseases
+- **Toggle Interface**: Expandable health analysis section
 - **Install Banner**: PWA installation prompt
 
 ### Food Analysis System
@@ -45,16 +47,20 @@ Preferred communication style: Simple, everyday language.
 - **Intelligent Calorie Estimation**: Accurate calorie calculation based on food recognition
 - **Confidence Scoring**: Analysis includes confidence levels for transparency
 - **Exercise Recommendations**: Personalized activity suggestions to burn consumed calories
+- **Health Impact Analysis**: Detailed analysis of food ingredients' effects on 10 common modern diseases
+- **Medical Advisory**: Benefits, risks, and recommendations for each health condition
 - **Server-Side Processing**: Secure API key handling through Node.js backend
 
 ## Data Flow
 
 1. **Image Capture**: User takes photo or selects from gallery
 2. **Image Preview**: Display captured image with analysis option
-3. **AI Analysis**: Image sent to OpenAI GPT-4 Vision API for food recognition
-4. **Results Processing**: Server processes AI response and formats data
-5. **Results Display**: Show food name, calories, confidence, and exercise recommendations
-6. **Reset Flow**: Allow users to analyze another image
+3. **AI Analysis**: Image sent to OpenAI GPT-4 Vision API for comprehensive food analysis
+4. **Health Analysis**: AI analyzes ingredients' impact on 10 common modern diseases
+5. **Results Processing**: Server processes AI response and formats data
+6. **Results Display**: Show food name, calories, confidence, and exercise recommendations
+7. **Health Impact Toggle**: Optional detailed health analysis for each disease condition
+8. **Reset Flow**: Allow users to analyze another image
 
 ## External Dependencies
 
