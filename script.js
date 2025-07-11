@@ -221,7 +221,7 @@ function removeImage() {
     hideSection('resultsSection');
 }
 
-function analyzeFood() {
+async function analyzeFood() {
     if (!selectedImage) {
         showError('Please select an image first.');
         return;
@@ -230,43 +230,115 @@ function analyzeFood() {
     showSection('loadingSection');
     hideSection('previewSection');
 
-    // Simulate API call delay
-    setTimeout(() => {
-        const analysisResult = performDummyAnalysis();
+    try {
+        // Convert image to base64
+        const base64Image = await convertImageToBase64(selectedImage);
+        
+        // Call OpenAI Vision API
+        const analysisResult = await analyzeWithOpenAI(base64Image);
+        
         displayResults(analysisResult);
         hideSection('loadingSection');
         showSection('resultsSection');
-    }, 2000 + Math.random() * 1000); // 2-3 seconds delay
+    } catch (error) {
+        console.error('Analysis failed:', error);
+        hideSection('loadingSection');
+        showError('Failed to analyze the image. Please try again.');
+        showSection('previewSection');
+    }
 }
 
-function performDummyAnalysis() {
-    // Randomly select a food item from the database
-    const randomIndex = Math.floor(Math.random() * foodDatabase.length);
-    const selectedFood = foodDatabase[randomIndex];
+// Convert image file to base64
+function convertImageToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64String = reader.result.split(',')[1];
+            resolve(base64String);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+// Analyze food using OpenAI GPT-4 Vision API via server endpoint
+async function analyzeWithOpenAI(base64Image) {
+    try {
+        const response = await fetch('/api/analyze-food', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                image: base64Image
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Server error: ${response.status}`);
+        }
+
+        const analysisResult = await response.json();
+        
+        return {
+            name: analysisResult.name || 'Unknown Food',
+            calories: analysisResult.calories || 300,
+            icon: 'coffee', // Default icon
+            activities: analysisResult.activities || getDefaultActivities(analysisResult.calories || 300),
+            confidence: analysisResult.confidence || 0.7,
+            description: analysisResult.description || ''
+        };
+        
+    } catch (error) {
+        console.error('Food analysis error:', error);
+        throw error;
+    }
+}
+
+
+
+// Fallback activities based on calories
+function getDefaultActivities(calories) {
+    const walkingMinutes = Math.round(calories / 4); // ~4 calories per minute walking
+    const runningMinutes = Math.round(calories / 10); // ~10 calories per minute running
+    const cyclingMinutes = Math.round(calories / 8); // ~8 calories per minute cycling
     
-    // Add some randomness to calories (±50)
-    const calorieVariation = Math.floor(Math.random() * 100) - 50;
-    const adjustedCalories = Math.max(50, selectedFood.calories + calorieVariation);
-    
-    return {
-        name: selectedFood.name,
-        calories: adjustedCalories,
-        icon: selectedFood.icon,
-        activities: selectedFood.activities
-    };
+    return [
+        { name: "Walking", duration: `${walkingMinutes} minutes`, icon: "walk" },
+        { name: "Running", duration: `${runningMinutes} minutes`, icon: "zap" },
+        { name: "Cycling", duration: `${cyclingMinutes} minutes`, icon: "bike" }
+    ];
 }
 
 function displayResults(result) {
     // Update food name and calories
     foodName.textContent = result.name;
-    caloriesInfo.textContent = `Approx. ${result.calories} kcal`;
+    let caloriesText = `Approx. ${result.calories} kcal`;
+    if (result.confidence) {
+        const confidencePercent = Math.round(result.confidence * 100);
+        caloriesText += ` (${confidencePercent}% confidence)`;
+    }
+    caloriesInfo.textContent = caloriesText;
     
     // Update food icon
     const foodIcon = document.querySelector('.food-icon i');
-    foodIcon.setAttribute('data-feather', result.icon);
+    if (foodIcon) {
+        foodIcon.setAttribute('data-feather', result.icon);
+    }
     
     // Clear and populate activities list
     activitiesList.innerHTML = '';
+    
+    // Add description if available
+    if (result.description) {
+        const descriptionElement = document.createElement('p');
+        descriptionElement.className = 'food-description';
+        descriptionElement.textContent = result.description;
+        descriptionElement.style.cssText = 'margin-bottom: 1rem; color: #666; font-size: 0.9rem; line-height: 1.4;';
+        activitiesList.appendChild(descriptionElement);
+    }
+    
     result.activities.forEach(activity => {
         const activityElement = createActivityElement(activity);
         activitiesList.appendChild(activityElement);

@@ -17,19 +17,21 @@ Preferred communication style: Simple, everyday language.
 - **Offline-First Approach**: Service worker caches resources for offline functionality
 
 ### Key Design Decisions
-- **No Backend Required**: All functionality runs client-side to minimize complexity and hosting costs
-- **Dummy Data Analysis**: Uses a predefined food database instead of real AI/ML services for simplicity
+- **Node.js Backend**: Express server handles OpenAI API integration securely
+- **Real AI Analysis**: Uses OpenAI GPT-4 Vision API for actual food recognition
 - **Camera Integration**: Leverages HTML5 camera API for photo capture
 - **Icon System**: Uses Feather Icons for consistent UI elements
+- **Secure API Handling**: API keys managed server-side for security
 
 ## Key Components
 
 ### Core Files
 1. **index.html**: Main application structure and UI components
-2. **script.js**: Application logic, image handling, and food analysis
+2. **script.js**: Application logic, image handling, and API communication
 3. **styles.css**: Responsive styling with mobile-first approach
-4. **service-worker.js**: PWA offline functionality and caching
-5. **manifest.json**: PWA configuration and metadata
+4. **server.js**: Node.js backend for OpenAI API integration
+5. **service-worker.js**: PWA offline functionality and caching
+6. **manifest.json**: PWA configuration and metadata
 
 ### UI Components
 - **Upload Section**: File input with camera/gallery options
@@ -39,23 +41,27 @@ Preferred communication style: Simple, everyday language.
 - **Install Banner**: PWA installation prompt
 
 ### Food Analysis System
-- **Local Database**: Predefined food entries with calories and exercise data
-- **Random Selection**: Simulates analysis by randomly selecting from database
-- **Exercise Recommendations**: Provides activity suggestions to burn consumed calories
+- **OpenAI GPT-4 Vision API**: Real-time food recognition using AI vision analysis
+- **Intelligent Calorie Estimation**: Accurate calorie calculation based on food recognition
+- **Confidence Scoring**: Analysis includes confidence levels for transparency
+- **Exercise Recommendations**: Personalized activity suggestions to burn consumed calories
+- **Server-Side Processing**: Secure API key handling through Node.js backend
 
 ## Data Flow
 
 1. **Image Capture**: User takes photo or selects from gallery
 2. **Image Preview**: Display captured image with analysis option
-3. **Simulated Analysis**: Random selection from local food database
-4. **Results Display**: Show food name, calories, and exercise recommendations
-5. **Reset Flow**: Allow users to analyze another image
+3. **AI Analysis**: Image sent to OpenAI GPT-4 Vision API for food recognition
+4. **Results Processing**: Server processes AI response and formats data
+5. **Results Display**: Show food name, calories, confidence, and exercise recommendations
+6. **Reset Flow**: Allow users to analyze another image
 
 ## External Dependencies
 
 ### Third-Party Services
 - **Feather Icons**: Icon library loaded from CDN
-- **No AI/ML Services**: Uses local dummy data instead of real food recognition
+- **OpenAI GPT-4 Vision API**: Real-time food recognition and analysis
+- **Express.js**: Web framework for Node.js backend
 
 ### Browser APIs
 - **Camera API**: For photo capture functionality
