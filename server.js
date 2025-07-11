@@ -65,9 +65,6 @@ app.post('/api/analyze-food', async (req, res) => {
 
         const analysisResult = JSON.parse(response.choices[0].message.content);
         
-        // Log the AI response for debugging
-        console.log('AI Response:', JSON.stringify(analysisResult, null, 2));
-        
         // Validate and format the response
         const result = {
             name: analysisResult.name || 'Unknown Food',
@@ -79,8 +76,6 @@ app.post('/api/analyze-food', async (req, res) => {
             ingredients: analysisResult.ingredients || [],
             health_impacts: analysisResult.health_impacts || []
         };
-        
-        console.log('Final result:', JSON.stringify(result, null, 2));
 
         res.json(result);
 
